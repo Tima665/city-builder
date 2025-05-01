@@ -1,7 +1,16 @@
-import { useState } from 'react';
-import Image from 'next/image';
+"use client";
 
-export type CellType = 'empty' | 'building' | 'road' | 'river' | 'park';
+import { useState } from "react";
+import Image from "next/image";
+import clsx from "clsx";
+import '../styles/cursors.css';
+
+export type CellType = "empty" | "building" | "road" | "river" | "park";
+
+export interface CellData {
+  type: CellType;
+  buildingImage?: string;
+}
 
 interface CellProps {
   x: number;
@@ -12,24 +21,61 @@ interface CellProps {
   onCellHover: (x: number, y: number) => void;
 }
 
-export const Cell = ({ x, y, type, buildingImage, onCellClick, onCellHover }: CellProps) => {
+export const Cell = ({
+  x,
+  y,
+  type,
+  buildingImage,
+  onCellClick,
+  onCellHover,
+}: CellProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const getCellColor = () => {
-    if (isHovered) return 'bg-blue-200';
+    if (isHovered) return "bg-blue-200/50";
     switch (type) {
-      case 'empty':
-        return 'bg-gray-100';
-      case 'building':
-        return 'bg-yellow-100';
-      case 'road':
-        return 'bg-gray-300';
-      case 'river':
-        return 'bg-blue-100';
-      case 'park':
-        return 'bg-green-100';
+      case "empty":
+        return "bg-white";
+      case "building":
+        return "bg-yellow-50";
+      case "road":
+        return "bg-gray-200";
+      case "river":
+        return "bg-blue-50";
+      case "park":
+        return "bg-green-50";
       default:
-        return 'bg-gray-100';
+        return "bg-white";
+    }
+  };
+
+  const getHoverEffect = () => {
+    switch (type) {
+      case "empty":
+        return "after:bg-white hover:after:opacity-30";
+      case "building":
+        return "after:bg-yellow-500 hover:after:opacity-30";
+      case "road":
+      case "river":
+      case "park":
+        return "after:bg-red-500 hover:after:opacity-50";
+      default:
+        return "after:bg-white hover:after:opacity-30";
+    }
+  };
+
+  const getCursor = () => {
+    switch (type) {
+      case "empty":
+        return "cursor-hammer";
+      case "building":
+        return "cursor-cross";
+      case "road":
+      case "river":
+      case "park":
+        return "cursor-not-allowed-custom";
+      default:
+        return "cursor-default";
     }
   };
 
@@ -38,9 +84,26 @@ export const Cell = ({ x, y, type, buildingImage, onCellClick, onCellHover }: Ce
     onCellClick(x, y, e.button === 2);
   };
 
+  const baseClasses = clsx(
+    "w-7 h-7 md:w-12 md:h-12 border border-gray-200",
+    getCellColor(),
+    "relative transition-all duration-200",
+    "after:absolute after:inset-0 after:opacity-0",
+    getHoverEffect(),
+    getCursor()
+  );
+
+  const imageContainerClasses = clsx(
+    "absolute inset-0",
+    "transition-all duration-200",
+    {
+      "brightness-90 scale-105": isHovered,
+    }
+  );
+
   return (
     <div
-      className={`w-16 h-16 border border-gray-300 ${getCellColor()} relative transition-colors duration-200`}
+      className={baseClasses}
       onClick={handleClick}
       onContextMenu={handleClick}
       onMouseEnter={() => {
@@ -49,16 +112,27 @@ export const Cell = ({ x, y, type, buildingImage, onCellClick, onCellHover }: Ce
       }}
       onMouseLeave={() => setIsHovered(false)}
     >
+      <div className={imageContainerClasses}>
+        <Image
+          src={"/terrain/grass.svg"}
+          alt="Building"
+          fill
+          className="object-cover pointer-events-none"
+        />
+      </div>
+
       {buildingImage && (
-        <div className={`absolute inset-0 ${isHovered ? 'brightness-75' : ''}`}>
+        <div className={imageContainerClasses}>
           <Image
             src={buildingImage}
             alt="Building"
             fill
-            className="object-cover"
+            className={clsx("object-cover pointer-events-none", {
+              "p-1": type !== "road",
+            })}
           />
         </div>
       )}
     </div>
   );
-}; 
+};

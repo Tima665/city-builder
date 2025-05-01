@@ -1,0 +1,15 @@
+.cursor-hammer {
+  cursor: url('/cursors/hammer.svg') 10 24, pointer;
+}
+
+.cursor-saw {
+  cursor: url('/cursors/saw.svg') 12 12, crosshair;
+}
+
+.cursor-cross {
+  cursor: url('/cursors/cross.svg') 16 16, crosshair;
+}
+
+.cursor-not-allowed-custom {
+  cursor: url('/cursors/not-allowed.svg') 16 16, not-allowed;
+} 
