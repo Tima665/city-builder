@@ -1,0 +1,1 @@
+export { getBuildingColors } from './getBuildingColors';

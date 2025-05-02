@@ -18,11 +18,15 @@ interface GameBoardProps {
 }
 
 const generateInitialGrid = () => {
-  const grid = Array(GRID_SIZE).fill(null).map(() =>
-    Array(GRID_SIZE).fill(null).map(() => ({ type: 'empty' } as CellData))
-  );
+  const grid = Array(GRID_SIZE)
+    .fill(null)
+    .map(() =>
+      Array(GRID_SIZE)
+        .fill(null)
+        .map(() => ({ type: 'empty' }) as CellData)
+    );
 
-  // Создаем список всех возможных координат
+  // Create a list of all possible coordinates
   const allCoordinates = [];
   for (let y = 0; y < GRID_SIZE; y++) {
     for (let x = 0; x < GRID_SIZE; x++) {
@@ -30,28 +34,31 @@ const generateInitialGrid = () => {
     }
   }
 
-  // Перемешиваем координаты случайным образом
+  // Shuffle coordinates randomly
   for (let i = allCoordinates.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [allCoordinates[i], allCoordinates[j]] = [allCoordinates[j], allCoordinates[i]];
   }
 
-  // Выбираем первые INITIAL_RIVER_CELLS координат и размещаем реку
+  // Select the first INITIAL_RIVER_CELLS coordinates and place the river
   for (let i = 0; i < INITIAL_RIVER_CELLS; i++) {
     const { x, y } = allCoordinates[i];
     grid[y][x] = { type: 'river', buildingImage: RIVER_IMAGE };
   }
 
-  // Выбираем следующие INITIAL_FOREST_CELLS координат и размещаем лес
+  // Select the next INITIAL_FOREST_CELLS coordinates and place forest
   for (let i = INITIAL_RIVER_CELLS; i < INITIAL_RIVER_CELLS + INITIAL_FOREST_CELLS; i++) {
     const { x, y } = allCoordinates[i];
     grid[y][x] = { type: 'park', buildingImage: FOREST_IMAGE };
   }
 
-  // Выбираем следующие INITIAL_ROAD_CELLS координат и размещаем дороги
-  for (let i = INITIAL_RIVER_CELLS + INITIAL_FOREST_CELLS; 
-       i < INITIAL_RIVER_CELLS + INITIAL_FOREST_CELLS + INITIAL_ROAD_CELLS && i < allCoordinates.length; 
-       i++) {
+  // Select the next INITIAL_ROAD_CELLS coordinates and place roads
+  for (
+    let i = INITIAL_RIVER_CELLS + INITIAL_FOREST_CELLS;
+    i < INITIAL_RIVER_CELLS + INITIAL_FOREST_CELLS + INITIAL_ROAD_CELLS &&
+    i < allCoordinates.length;
+    i++
+  ) {
     const { x, y } = allCoordinates[i];
     grid[y][x] = { type: 'road', buildingImage: ROAD_IMAGE };
   }
@@ -64,25 +71,28 @@ export const GameBoard = ({ scale, onScaleChange }: GameBoardProps) => {
   const [selectedCell, setSelectedCell] = useState<{ x: number; y: number } | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? -0.1 : 0.1;
-    const newScale = Math.max(0.5, Math.min(2, scale + delta));
-    onScaleChange(newScale);
-  }, [scale, onScaleChange]);
+  const handleWheel = useCallback(
+    (e: React.WheelEvent) => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      const newScale = Math.max(0.5, Math.min(2, scale + delta));
+      onScaleChange(newScale);
+    },
+    [scale, onScaleChange]
+  );
 
   const handleCellClick = useCallback((x: number, y: number, isRightClick: boolean) => {
     setGrid(prev => {
       const newGrid = [...prev];
       const currentCell = newGrid[y][x];
-      
+
       if (isRightClick) {
-        // Можно удалять только здания, реку, лес и дороги нельзя
+        // Can only remove buildings, can't remove river, forest or roads
         if (currentCell.type === 'building') {
           newGrid[y][x] = { type: 'empty' };
         }
       } else if (currentCell.type === 'empty') {
-        // Строить можно только на пустых клетках
+        // Can only build on empty cells
         const randomBuilding = BUILDING_IMAGES[Math.floor(Math.random() * BUILDING_IMAGES.length)];
         newGrid[y][x] = { type: 'building', buildingImage: randomBuilding };
       }
@@ -123,10 +133,12 @@ export const GameBoard = ({ scale, onScaleChange }: GameBoardProps) => {
       </div>
       {selectedCell && (
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg text-sm">
-          <p className="font-medium">Координаты: ({selectedCell.x}, {selectedCell.y})</p>
-          <p className="text-gray-600">Тип: {grid[selectedCell.y][selectedCell.x].type}</p>
+          <p className="font-medium">
+            Coordinates: ({selectedCell.x}, {selectedCell.y})
+          </p>
+          <p className="text-gray-600">Type: {grid[selectedCell.y][selectedCell.x].type}</p>
         </div>
       )}
     </div>
   );
-}; 
+};
