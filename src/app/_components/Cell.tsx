@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import clsx from 'clsx';
-import '../styles/cursors.css';
+import '../../styles/cursors.css';
 
 export type CellType = 'empty' | 'building' | 'road' | 'river' | 'park';
 

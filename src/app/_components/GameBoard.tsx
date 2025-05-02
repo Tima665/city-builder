@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { Cell, CellData } from './Cell';
 
 const GRID_SIZE = 10;
@@ -70,6 +70,11 @@ export const GameBoard = ({ scale, onScaleChange }: GameBoardProps) => {
   const [grid, setGrid] = useState<CellData[][]>(generateInitialGrid);
   const [selectedCell, setSelectedCell] = useState<{ x: number; y: number } | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleWheel = useCallback(
     (e: React.WheelEvent) => {
@@ -104,6 +109,12 @@ export const GameBoard = ({ scale, onScaleChange }: GameBoardProps) => {
     setSelectedCell({ x, y });
   }, []);
 
+  // Базовая версия для сервера
+  if (!isMounted) {
+    return <div className="базовые-классы-без-интерактивности">...</div>;
+  }
+
+  // Полная версия для клиента
   return (
     <div className="absolute inset-0 overflow-hidden bg-gray-50">
       <div
@@ -133,7 +144,7 @@ export const GameBoard = ({ scale, onScaleChange }: GameBoardProps) => {
       </div>
       {selectedCell && (
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg text-sm">
-          <p className="font-medium">
+          <p className="font-medium text-gray-600">
             Coordinates: ({selectedCell.x}, {selectedCell.y})
           </p>
           <p className="text-gray-600">Type: {grid[selectedCell.y][selectedCell.x].type}</p>

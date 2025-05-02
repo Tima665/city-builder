@@ -99,12 +99,12 @@ export default function Home3D() {
   return (
     <main className="h-screen w-screen bg-gradient-to-b from-gray-50 to-gray-100 flex flex-col">
       <div className="flex justify-between items-center py-4 px-6">
-        <h1 className="text-3xl font-bold text-gray-800">3D Город-Строитель</h1>
+        <h1 className="text-3xl font-bold text-gray-800">3D City Builder</h1>
         <Link
           href="/"
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow transition"
         >
-          Вернуться к 2D версии
+          Back to 2D version
         </Link>
       </div>
 
@@ -119,16 +119,16 @@ export default function Home3D() {
 
         {hoveredCell && (
           <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg text-sm">
-            <p className="font-medium text-black">
-              Координаты: ({hoveredCell.x}, {hoveredCell.y})
+            <p className="font-medium text-gray-600">
+              Coordinates: ({hoveredCell.x}, {hoveredCell.y})
             </p>
-            <p className="text-gray-600">Тип: {hoveredCell.type}</p>
+            <p className="text-gray-600">Type: {hoveredCell.type}</p>
           </div>
         )}
 
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg text-sm text-gray-600">
           <p>
-            Используйте мышь для вращения камеры • Левая кнопка мыши - построить, правая - удалить
+            Use the mouse to rotate the camera • Left mouse button - build, right mouse button - remove
           </p>
         </div>
       </div>
