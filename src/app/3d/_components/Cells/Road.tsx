@@ -6,7 +6,7 @@ import { BuildingComponentProps } from '../Building3D';
 import { Group } from 'three';
 import { Box } from '@react-three/drei';
 
-export const Road = ({ position }: Omit<BuildingComponentProps, 'colors'>) => {
+export const Road = ({ position, hovered = false }: Omit<BuildingComponentProps, 'colors'> & { hovered?: boolean }) => {
   const carRef = useRef<Group>(null);
   const car2Ref = useRef<Group>(null);
 
@@ -27,11 +27,18 @@ export const Road = ({ position }: Omit<BuildingComponentProps, 'colors'>) => {
     }
   });
 
+  // Colors based on hover state
+  const ROAD_COLOR = hovered ? "#FFEB3B" : "#424242";
+  const CAR1_BODY_COLOR = hovered ? "#FDD835" : "#E53935";
+  const CAR1_ROOF_COLOR = hovered ? "#F57F17" : "#C62828";
+  const CAR2_BODY_COLOR = hovered ? "#FDD835" : "#2196F3";
+  const CAR2_ROOF_COLOR = hovered ? "#F57F17" : "#1565C0";
+
   return (
     <group position={position}>
       {/* Road base - asphalt */}
       <Box args={[0.9, 0.02, 0.9]} position={[0, 0.01, 0]}>
-        <meshStandardMaterial color="#424242" roughness={0.8} />
+        <meshStandardMaterial color={ROAD_COLOR} roughness={0.8} />
       </Box>
 
       {/* Vertical markings - dotted line */}
@@ -45,12 +52,12 @@ export const Road = ({ position }: Omit<BuildingComponentProps, 'colors'>) => {
       <group ref={carRef} position={[-0.25, 0.05, 0]} rotation={[0, Math.PI / 2, 0]}>
         {/* Body */}
         <Box args={[0.12, 0.05, 0.06]} position={[0, 0, 0]}>
-          <meshStandardMaterial color="#E53935" metalness={0.6} roughness={0.3} />
+          <meshStandardMaterial color={CAR1_BODY_COLOR} metalness={0.6} roughness={0.3} />
         </Box>
 
         {/* Roof */}
         <Box args={[0.07, 0.04, 0.06]} position={[0, 0.045, 0]}>
-          <meshStandardMaterial color="#C62828" metalness={0.6} roughness={0.3} />
+          <meshStandardMaterial color={CAR1_ROOF_COLOR} metalness={0.6} roughness={0.3} />
         </Box>
 
         {/* Wheels */}
@@ -88,12 +95,12 @@ export const Road = ({ position }: Omit<BuildingComponentProps, 'colors'>) => {
       <group ref={car2Ref} position={[0.25, 0.05, 0]} rotation={[0, Math.PI / 2, 0]}>
         {/* Body */}
         <Box args={[0.12, 0.05, 0.06]} position={[0, 0, 0]}>
-          <meshStandardMaterial color="#2196F3" metalness={0.6} roughness={0.3} />
+          <meshStandardMaterial color={CAR2_BODY_COLOR} metalness={0.6} roughness={0.3} />
         </Box>
 
         {/* Roof */}
         <Box args={[0.07, 0.04, 0.06]} position={[0, 0.045, 0]}>
-          <meshStandardMaterial color="#1565C0" metalness={0.6} roughness={0.3} />
+          <meshStandardMaterial color={CAR2_ROOF_COLOR} metalness={0.6} roughness={0.3} />
         </Box>
 
         {/* Wheels */}
